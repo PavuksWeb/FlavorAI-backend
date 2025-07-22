@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma, User } from 'generated/prisma';
@@ -16,6 +21,22 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException({ message: 'Invalid email or password' });
     }
+    return this.generateToken(user);
+  }
+
+  async registration(userDto: Prisma.UserCreateInput) {
+    const candidate = await this.userService.findOne(userDto.email);
+    if (candidate) {
+      throw new HttpException(
+        'This user is already exist',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const hashPassword = await bcrypt.hash(userDto.password, 5);
+    const user = await this.userService.createUser({
+      ...userDto,
+      password: hashPassword,
+    });
     return this.generateToken(user);
   }
 

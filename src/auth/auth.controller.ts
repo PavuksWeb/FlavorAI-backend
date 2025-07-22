@@ -1,15 +1,18 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
-import { AuthPayloadDto } from './dto/auth.dto';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
+import { Prisma } from 'generated/prisma';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('login')
-  login(@Request() req: Request, @Body() authPayLoad: AuthPayloadDto) {
-    req.user;
-    return this.authService.validateUser(authPayLoad);
+  @Post('/login')
+  login(@Body() userDto: Prisma.UserCreateInput) {
+    return this.authService.login(userDto);
+  }
+
+  @Post('/registration')
+  registration(@Body() userDto: Prisma.UserCreateInput) {
+    return this.authService.registration(userDto);
   }
 }
