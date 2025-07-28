@@ -1,0 +1,57 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { RecipeService } from './recipe.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Prisma } from '@prisma/client';
+import { Request } from 'express';
+
+@Controller('recipes')
+export class RecipeController {
+  constructor(private readonly recipeService: RecipeService) {}
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  createRecipe(
+    @Body() createRecipeDto: Prisma.RecipeCreateInput,
+    @Req() req: Request,
+  ) {
+    const user = req.user as { id: number };
+    return this.recipeService.createRecipe(createRecipeDto, user.id);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  findAllRecipes() {
+    return this.recipeService.findAllRecipes();
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  findRecipe(@Param('id') id: string) {
+    return this.recipeService.findRecipeById(Number(id));
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  updateRecipe(
+    @Param('id') id: string,
+    @Body() data: Prisma.RecipeUpdateInput,
+  ) {
+    return this.recipeService.updateRecipe(Number(id), data);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  deleteRecipe(@Param('id') id: string) {
+    return this.recipeService.deleteRecipe(Number(id));
+  }
+}
