@@ -4,8 +4,6 @@ import { DatabaseService } from 'src/database/database.service';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
-// export const roundsOfHashing = 10;
-
 @Injectable()
 export class UserService {
   constructor(

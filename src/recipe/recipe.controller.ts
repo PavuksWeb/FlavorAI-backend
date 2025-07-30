@@ -34,6 +34,13 @@ export class RecipeController {
     return this.recipeService.findAllRecipes();
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  findRecipeByUserId(@Req() req: Request) {
+    const user = req.user as { id: number };
+    return this.recipeService.findRecipeByUserId(user.id);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findRecipe(@Param('id') id: string) {

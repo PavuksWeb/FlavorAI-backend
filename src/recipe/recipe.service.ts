@@ -14,6 +14,10 @@ export class RecipeService {
     return this.databaseService.recipe.findUnique({ where: { id } });
   }
 
+  async findRecipeByUserId(authorId: number): Promise<Recipe[]> {
+    return this.databaseService.recipe.findMany({ where: { authorId } });
+  }
+
   async createRecipe(
     data: Omit<Prisma.RecipeCreateInput, 'author'>,
     userId: number,
