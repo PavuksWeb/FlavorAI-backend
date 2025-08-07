@@ -36,9 +36,13 @@ export class RecipeService {
 
   async updateRecipe(
     id: number,
+    authorId: number,
     data: Prisma.RecipeUpdateInput,
   ): Promise<Recipe> {
-    return this.databaseService.recipe.update({ where: { id }, data });
+    return this.databaseService.recipe.update({
+      where: { id, authorId },
+      data,
+    });
   }
 
   async deleteRecipe(id: number): Promise<Recipe> {

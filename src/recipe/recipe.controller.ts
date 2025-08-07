@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { Request } from 'express';
 
 @Controller('recipes')
@@ -24,12 +24,11 @@ export class RecipeController {
     @Body() createRecipeDto: Prisma.RecipeCreateInput,
     @Req() req: Request,
   ) {
-    const user = req.user as { id: number };
+    const user = req.user as User;
     return this.recipeService.createRecipe(createRecipeDto, user.id);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAllRecipes() {
     return this.recipeService.findAllRecipes();
   }
@@ -37,7 +36,7 @@ export class RecipeController {
   @Get()
   @UseGuards(JwtAuthGuard)
   findRecipeByUserId(@Req() req: Request) {
-    const user = req.user as { id: number };
+    const user = req.user as User;
     return this.recipeService.findRecipeByUserId(user.id);
   }
 
@@ -52,8 +51,10 @@ export class RecipeController {
   updateRecipe(
     @Param('id') id: string,
     @Body() data: Prisma.RecipeUpdateInput,
+    @Req() req: Request,
   ) {
-    return this.recipeService.updateRecipe(Number(id), data);
+    const user = req.user as User;
+    return this.recipeService.updateRecipe(Number(id), user.id, data);
   }
 
   @Delete(':id')
