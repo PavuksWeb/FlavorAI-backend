@@ -41,7 +41,6 @@ export class RecipeController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   findRecipe(@Param('id') id: string) {
     return this.recipeService.findRecipeById(Number(id));
   }

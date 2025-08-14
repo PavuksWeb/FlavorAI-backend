@@ -20,7 +20,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async registration(data: Prisma.UserCreateInput): Promise<AuthEntity> {
+  async signup(data: Prisma.UserCreateInput): Promise<AuthEntity> {
     const candidate = await this.databaseService.user.findUnique({
       where: { email: data.email },
     });
@@ -30,8 +30,9 @@ export class AuthService {
     }
 
     const user = await this.userService.createUser(data);
+
     return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
+      access_token: this.jwtService.sign({ userId: user.id }),
     };
   }
 
@@ -50,8 +51,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
+    const payload = { userId: user.id };
+
     return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
+      access_token: this.jwtService.sign(payload),
     };
   }
 }

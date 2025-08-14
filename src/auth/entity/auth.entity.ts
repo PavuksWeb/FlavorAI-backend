@@ -1,3 +1,3 @@
 export class AuthEntity {
-  accessToken: string;
+  access_token: string;
 }
